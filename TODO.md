@@ -21,7 +21,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   bounded worker concurrency.
 - [x] Implement `/v2/scrape` with the exact request, response, and error behavior in
   the design.
-- Implement the optional SearXNG adapter and `/v2/search` result translation.
+- [x] Implement the optional SearXNG adapter and `/v2/search` result translation.
 - Add unit, golden, security, contract, and container integration tests,
   including a Firecrawl SDK/Hermes-compatible smoke test.
 - Build the non-root, read-only-compatible container image and document concrete

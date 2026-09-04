@@ -18,6 +18,7 @@ from .logging_config import configure_logging
 from .middleware import BearerAuthenticationMiddleware, RequestIDMiddleware
 from .network import SafeHTTPFetcher, create_http_client
 from .scrape import create_scrape_router
+from .search import SearXNGClient, create_search_router
 from .settings import Settings, get_settings
 
 APPLICATION_TITLE = "Firecrawlish Extractor"
@@ -31,6 +32,11 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
         application.state.fetcher = SafeHTTPFetcher(
             client,
             allow_private_networks=settings.allow_private_networks,
+        )
+        application.state.searcher = (
+            SearXNGClient(client, settings.searxng_url)
+            if settings.searxng_url is not None
+            else None
         )
         extraction_pool = ExtractionPool()
         application.state.extraction_pool = extraction_pool
@@ -58,6 +64,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.add_exception_handler(Exception, internal_exception_handler)
     application.include_router(create_health_router(application_settings))
     application.include_router(create_scrape_router())
+    application.include_router(create_search_router())
     api_key = application_settings.firecrawlish_api_key
     application.add_middleware(
         BearerAuthenticationMiddleware,

@@ -54,7 +54,7 @@ class ScrapeResponse(BaseModel):
     data: ScrapeData
 
 
-def _require_json_content_type(request: Request) -> None:
+def require_json_content_type(request: Request) -> None:
     content_type = request.headers.get("content-type")
     if content_type is None:
         raise HTTPException(
@@ -159,7 +159,7 @@ def create_scrape_router() -> APIRouter:
         request: Request,
         scrape_request: ScrapeRequest,
     ) -> ScrapeResponse:
-        _require_json_content_type(request)
+        require_json_content_type(request)
         fetcher = request.app.state.fetcher
         extraction_pool = request.app.state.extraction_pool
         try:
