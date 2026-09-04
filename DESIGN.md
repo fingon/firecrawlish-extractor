@@ -381,10 +381,10 @@ The repository has two workflows.
 
 The CI workflow runs for pull requests and pushes to the default branch. It
 installs the declared Python version and dependencies from the committed lock
-file in frozen mode, then runs the Makefile `lint`, `test`, and `build` targets.
-It also builds the container without pushing it. GitHub dependency caching may
-cache downloaded packages, but it must not allow resolution outside the lock
-file.
+file in frozen mode, then runs the Makefile `lint`, `test`, `integration`, and
+`build` targets. It also builds and smoke-tests a local container image without
+pushing it. GitHub dependency caching may cache downloaded packages, but it
+must not allow resolution outside the lock file.
 
 The workflow uses least-privilege read-only repository permissions, cancels an
 older run for the same branch or pull request, and does not receive publishing

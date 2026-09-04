@@ -9,18 +9,41 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: true
+          python-version: "3.14.7"
+          version: "0.12.7"
+      - name: Install locked development environment
+        run: uv sync --locked --dev
       - name: Run prek
         run: uv run --locked prek run --all-files
       - name: Run Makefile lint target
         run: make lint
-
+      - name: Run Makefile test target
+        run: make test
+      - name: Run integration tests
+        run: make integration
+      - name: Run Makefile build target
+        run: make build
+      - name: Build container without publishing
+        run: make image CONTAINER_RUNTIME=docker IMAGE_NAME=firecrawlish-extractor:ci
+      - name: Smoke-test local container image
+        run: make smoke CONTAINER_RUNTIME=docker IMAGE_NAME=firecrawlish-extractor:ci

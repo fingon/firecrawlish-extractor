@@ -26,7 +26,7 @@ The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
   including a Firecrawl SDK/Hermes-compatible smoke test.
 - [x] Build the non-root, read-only-compatible container image and document concrete
   Hermes and SearXNG deployment examples once the commands can be verified.
-- Add a least-privilege GitHub Actions CI workflow that runs the Makefile lint,
+- [x] Add a least-privilege GitHub Actions CI workflow that runs the Makefile lint,
   test, build, and non-publishing container-build targets for pull requests and
   default-branch pushes using the frozen Python lock file.
 - Add a daily and manually dispatchable GitHub Actions publisher that detects
