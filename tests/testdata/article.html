@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Example article</title>
+    <meta name="description" content="An example article description.">
+    <meta property="og:site_name" content="Example News">
+  </head>
+  <body>
+    <nav>Navigation that should not be extracted.</nav>
+    <main>
+      <article>
+        <h1>Example article</h1>
+        <p>
+          This is the main article content with enough text for extraction and
+          useful context for a reader who wants to understand the subject.
+        </p>
+        <p>
+          It contains a
+          <a href="/related">link to related reading on the same subject</a>
+          and enough surrounding prose to avoid being treated as noise.
+        </p>
+        <h2>Details</h2>
+        <p>
+          The details section contains additional information about the
+          article, including context and explanation for readers.
+        </p>
+        <table>
+          <tr><th>Term</th><th>Meaning</th></tr>
+          <tr><td>HTML</td><td>HyperText Markup Language</td></tr>
+        </table>
+        <!-- This comment must not be included. -->
+      </article>
+    </main>
+  </body>
+</html>

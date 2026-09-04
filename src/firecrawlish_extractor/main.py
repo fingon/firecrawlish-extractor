@@ -12,6 +12,7 @@ from .errors import (
     internal_exception_handler,
     request_validation_error_handler,
 )
+from .extraction import ExtractionPool
 from .health import create_health_router
 from .logging_config import configure_logging
 from .middleware import BearerAuthenticationMiddleware, RequestIDMiddleware
@@ -30,7 +31,12 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
             client,
             allow_private_networks=settings.allow_private_networks,
         )
-        yield
+        extraction_pool = ExtractionPool()
+        application.state.extraction_pool = extraction_pool
+        try:
+            yield
+        finally:
+            await extraction_pool.aclose()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

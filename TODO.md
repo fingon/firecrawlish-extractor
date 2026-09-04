@@ -17,7 +17,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   Firecrawl error envelope, and `/healthz` endpoint.
 - [x] Implement safe streaming HTTP fetching with URL validation, DNS/address
   checks, redirect revalidation, fixed deadlines, and decoded-body limits.
-- Implement Trafilatura Markdown, cleaned HTML, and metadata extraction behind
+- [x] Implement Trafilatura Markdown, cleaned HTML, and metadata extraction behind
   bounded worker concurrency.
 - Implement `/v2/scrape` with the exact request, response, and error behavior in
   the design.
