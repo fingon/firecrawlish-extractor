@@ -9,6 +9,6 @@ the Firecrawl v2 response format. The HTTP service is configured through
 environment variables and has no required external state.
 
 See [DESIGN.md](DESIGN.md) for the API, security model, configuration, and
-acceptance criteria, and [TODO.md](TODO.md) for the remaining implementation
-work. See [DEPLOYMENT.md](DEPLOYMENT.md) for verified container, Hermes, and
+acceptance criteria, and [TODO.md](TODO.md) for the implementation checklist.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for verified container, Hermes, and
 SearXNG setup examples.
