@@ -2,7 +2,7 @@
 
 The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
 
-- Establish code-quality checks before any implementation: target the latest
+- [x] Establish code-quality checks before any implementation: target the latest
   stable Python release; add the latest stable prek, Ruff, and ty releases to
   the locked development dependencies; configure prek through
   `.pre-commit-config.yaml` to run Ruff linting and formatting plus ty type
