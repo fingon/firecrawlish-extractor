@@ -24,7 +24,7 @@ The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
 - [x] Implement the optional SearXNG adapter and `/v2/search` result translation.
 - [x] Add unit, golden, security, contract, and container integration tests,
   including a Firecrawl SDK/Hermes-compatible smoke test.
-- Build the non-root, read-only-compatible container image and document concrete
+- [x] Build the non-root, read-only-compatible container image and document concrete
   Hermes and SearXNG deployment examples once the commands can be verified.
 - Add a least-privilege GitHub Actions CI workflow that runs the Makefile lint,
   test, build, and non-publishing container-build targets for pull requests and

@@ -10,4 +10,5 @@ environment variables and has no required external state.
 
 See [DESIGN.md](DESIGN.md) for the API, security model, configuration, and
 acceptance criteria, and [TODO.md](TODO.md) for the remaining implementation
-work.
+work. See [DEPLOYMENT.md](DEPLOYMENT.md) for verified container, Hermes, and
+SearXNG setup examples.

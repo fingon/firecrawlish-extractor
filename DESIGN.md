@@ -359,6 +359,9 @@ there is no database, durable cache, generated configuration, or other state
 whose survival across requests or container replacements would improve the
 defined behavior.
 
+Concrete Docker and Podman commands, including Hermes and SearXNG wiring, are
+maintained in [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Dependency and development policy
 
 Runtime and development dependencies live in `pyproject.toml` and a committed

@@ -1,4 +1,4 @@
-ARG PYTHON_BASE=python:3.14-slim
+ARG PYTHON_BASE=python:3.14.7-slim
 
 FROM ${PYTHON_BASE} AS builder
 
