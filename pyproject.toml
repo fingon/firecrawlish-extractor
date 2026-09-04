@@ -4,17 +4,30 @@ version = "0.1.0"
 description = "A small Firecrawl-compatible extraction and search service."
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
-dependencies = []
+dependencies = [
+    "fastapi==0.141.1",
+    "httpx==0.28.1",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "structlog==26.1.0",
+    "trafilatura==2.2.0",
+    "uvicorn==0.52.4",
+]
+
+[project.scripts]
+firecrawlish-extractor = "firecrawlish_extractor.__main__:main"
 
 [dependency-groups]
 dev = [
     "prek==0.5.2",
+    "pytest==9.1.1",
     "ruff==0.16.6",
     "ty==0.0.78",
 ]
 
+[build-system]
+requires = ["uv_build==0.12.9"]
+build-backend = "uv_build"
+
 [tool.ruff]
 line-length = 80
-
-[tool.uv]
-package = false

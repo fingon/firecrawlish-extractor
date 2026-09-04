@@ -11,7 +11,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   as the sole override. Make both `prek run --all-files` and the equivalent
   Makefile lint target mandatory in CI so every subsequent commit follows the
   same checks.
-- Scaffold the locked Python project, FastAPI application, typed settings,
+- [x] Scaffold the locked Python project, FastAPI application, typed settings,
   structured logging, and remaining Makefile targets.
 - Implement the optional bearer-authentication middleware, request IDs, common
   Firecrawl error envelope, and `/healthz` endpoint.
