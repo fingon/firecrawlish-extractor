@@ -419,6 +419,9 @@ picked up directly by the daily image workflow.
 The publish job uses `contents: read` and `packages: write`, authenticates with
 the repository's GitHub token, prevents overlapping publishers with a single
 concurrency group, and never exposes registry credentials to pull requests.
+The detection job has only `packages: read`; the publishing job is created only
+after a changed fingerprint is detected. The workflow is triggered by relevant
+default-branch pushes, a daily schedule, or an explicit manual dispatch.
 BuildKit registry caching and provenance are allowed, but neither may introduce
 additional image tags.
 

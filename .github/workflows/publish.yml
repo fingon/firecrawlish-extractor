@@ -1,0 +1,216 @@
+name: Publish latest image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .dockerignore
+      - .github/workflows/publish.yml
+      - Dockerfile
+      - README.md
+      - pyproject.toml
+      - src/**
+      - uv.lock
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild and publish even when the fingerprint is unchanged
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-latest
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect changed build inputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      base_digest: ${{ steps.fingerprint.outputs.base_digest }}
+      base_ref: ${{ steps.fingerprint.outputs.base_ref }}
+      changed: ${{ steps.fingerprint.outputs.changed }}
+      fingerprint: ${{ steps.fingerprint.outputs.fingerprint }}
+      image_ref: ${{ steps.fingerprint.outputs.image_ref }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Compute build fingerprint
+        id: fingerprint
+        env:
+          FORCE_PUBLISH: ${{ inputs.force || 'false' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          base_spec="$(sed -n 's/^ARG PYTHON_BASE=//p' Dockerfile | head -n 1)"
+          if [[ -z "$base_spec" ]]; then
+            echo "Dockerfile does not define a default PYTHON_BASE" >&2
+            exit 1
+          fi
+          base_ref="${base_spec%@*}"
+          base_manifest="$({
+            docker buildx imagetools inspect "$base_ref" \
+              --format '{{json .Manifest}}'
+          })"
+          base_digest="$(jq -er \
+            '.digest | select(type == "string" and startswith("sha256:"))' \
+            <<< "$base_manifest")"
+
+          lock_checksum="$(sha256sum uv.lock | cut -d ' ' -f 1)"
+          other_input_files=(
+            .dockerignore
+            Dockerfile
+            README.md
+            pyproject.toml
+          )
+          while IFS= read -r source_file; do
+            other_input_files+=("$source_file")
+          done < <(git ls-files -- src)
+
+          other_input_checksums=""
+          for input_file in "${other_input_files[@]}"; do
+            if [[ ! -f "$input_file" ]]; then
+              echo "Missing container input: $input_file" >&2
+              exit 1
+            fi
+            input_checksum="$(sha256sum "$input_file" | cut -d ' ' -f 1)"
+            other_input_checksums+="$input_file:$input_checksum"$'\n'
+          done
+          other_inputs_checksum="$(
+            printf '%s' "$other_input_checksums" | sha256sum | cut -d ' ' -f 1
+          )"
+          build_fingerprint="$(
+            printf 'base-image=%s\nlock=%s\nother-inputs=%s\n' \
+              "$base_digest" "$lock_checksum" "$other_inputs_checksum" \
+              | sha256sum | cut -d ' ' -f 1
+          )"
+
+          repository_name="$(printf '%s' "$GITHUB_REPOSITORY" \
+            | tr '[:upper:]' '[:lower:]')"
+          image_ref="ghcr.io/${repository_name}:latest"
+          printf '%s' "$GITHUB_TOKEN" | docker login ghcr.io \
+            --username "$GITHUB_ACTOR" --password-stdin
+
+          pull_log="$(mktemp)"
+          if docker pull "$image_ref" >"$pull_log" 2>&1; then
+            existing_fingerprint="$(
+              docker image inspect "$image_ref" \
+                --format '{{index .Config.Labels "org.firecrawlish.build-inputs"}}'
+            )"
+          else
+            pull_status=$?
+            if grep -Eqi 'manifest unknown|not found|does not exist' "$pull_log";
+            then
+              existing_fingerprint=""
+            else
+              cat "$pull_log" >&2
+              rm -f "$pull_log"
+              exit "$pull_status"
+            fi
+          fi
+          rm -f "$pull_log"
+
+          changed=false
+          if [[ "$FORCE_PUBLISH" == "true" || \
+            "$existing_fingerprint" != "$build_fingerprint" ]]; then
+            changed=true
+          fi
+
+          {
+            printf 'base_digest=%s\n' "$base_digest"
+            printf 'base_ref=%s\n' "$base_ref"
+            printf 'changed=%s\n' "$changed"
+            printf 'fingerprint=%s\n' "$build_fingerprint"
+            printf 'image_ref=%s\n' "$image_ref"
+          } >> "$GITHUB_OUTPUT"
+
+          if [[ "$changed" == "true" ]]; then
+            echo "Build inputs changed; a new latest image will be published."
+          else
+            echo "Build inputs unchanged; no image will be published."
+          fi
+
+  publish:
+    name: Build, smoke-test, and publish latest
+    needs: detect
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    env:
+      BASE_DIGEST: ${{ needs.detect.outputs.base_digest }}
+      BASE_REF: ${{ needs.detect.outputs.base_ref }}
+      BUILD_FINGERPRINT: ${{ needs.detect.outputs.fingerprint }}
+      IMAGE_REF: ${{ needs.detect.outputs.image_ref }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Log in to GitHub Container Registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GITHUB_TOKEN" | docker login ghcr.io \
+            --username "$GITHUB_ACTOR" --password-stdin
+      - name: Build image from resolved base digest
+        run: |
+          set -euo pipefail
+          docker build \
+            --build-arg "PYTHON_BASE=${BASE_REF}@${BASE_DIGEST}" \
+            --label "org.firecrawlish.build-inputs=${BUILD_FINGERPRINT}" \
+            --tag "$IMAGE_REF" .
+          actual_fingerprint="$(
+            docker image inspect "$IMAGE_REF" \
+              --format '{{index .Config.Labels "org.firecrawlish.build-inputs"}}'
+          )"
+          if [[ "$actual_fingerprint" != "$BUILD_FINGERPRINT" ]]; then
+            echo "Built image has an unexpected input fingerprint" >&2
+            exit 1
+          fi
+      - name: Smoke-test changed image
+        run: |
+          set -euo pipefail
+          container_id=""
+          cleanup() {
+            if [[ -n "$container_id" ]]; then
+              docker rm --force "$container_id" >/dev/null
+            fi
+          }
+          trap cleanup EXIT
+
+          container_id="$(docker run --detach \
+            --publish 127.0.0.1:3002:3002 \
+            --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=16m \
+            "$IMAGE_REF")"
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error \
+              http://127.0.0.1:3002/healthz; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs "$container_id"
+          exit 1
+      - name: Push only the latest tag
+        run: |
+          set -euo pipefail
+          docker push "$IMAGE_REF"
