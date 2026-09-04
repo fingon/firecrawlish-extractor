@@ -29,6 +29,6 @@ The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
 - [x] Add a least-privilege GitHub Actions CI workflow that runs the Makefile lint,
   test, build, and non-publishing container-build targets for pull requests and
   default-branch pushes using the frozen Python lock file.
-- Add a daily and manually dispatchable GitHub Actions publisher that detects
+- [x] Add a daily and manually dispatchable GitHub Actions publisher that detects
   base-image digest or committed dependency-lock changes, smoke-tests changed
   builds, and publishes only the `latest` tag to GitHub Container Registry.
