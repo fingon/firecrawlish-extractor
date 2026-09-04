@@ -1,3 +1,7 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from typing import cast
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
@@ -11,9 +15,22 @@ from .errors import (
 from .health import create_health_router
 from .logging_config import configure_logging
 from .middleware import BearerAuthenticationMiddleware, RequestIDMiddleware
+from .network import SafeHTTPFetcher, create_http_client
 from .settings import Settings, get_settings
 
 APPLICATION_TITLE = "Firecrawlish Extractor"
+
+
+@asynccontextmanager
+async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
+    settings = cast(Settings, application.state.settings)
+    async with create_http_client() as client:
+        application.state.http_client = client
+        application.state.fetcher = SafeHTTPFetcher(
+            client,
+            allow_private_networks=settings.allow_private_networks,
+        )
+        yield
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -21,6 +38,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     configure_logging(application_settings.log_level)
 
     application = FastAPI(
+        lifespan=application_lifespan,
         title=APPLICATION_TITLE,
         version=__version__,
     )

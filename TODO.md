@@ -15,7 +15,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   structured logging, and remaining Makefile targets.
 - [x] Implement the optional bearer-authentication middleware, request IDs, common
   Firecrawl error envelope, and `/healthz` endpoint.
-- Implement safe streaming HTTP fetching with URL validation, DNS/address
+- [x] Implement safe streaming HTTP fetching with URL validation, DNS/address
   checks, redirect revalidation, fixed deadlines, and decoded-body limits.
 - Implement Trafilatura Markdown, cleaned HTML, and metadata extraction behind
   bounded worker concurrency.

@@ -26,6 +26,8 @@ def configure_logging(log_level: LogLevel) -> None:
     root_logger.handlers.clear()
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
     structlog.configure(
         cache_logger_on_first_use=True,
