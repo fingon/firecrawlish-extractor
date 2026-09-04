@@ -13,7 +13,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   same checks.
 - [x] Scaffold the locked Python project, FastAPI application, typed settings,
   structured logging, and remaining Makefile targets.
-- Implement the optional bearer-authentication middleware, request IDs, common
+- [x] Implement the optional bearer-authentication middleware, request IDs, common
   Firecrawl error envelope, and `/healthz` endpoint.
 - Implement safe streaming HTTP fetching with URL validation, DNS/address
   checks, redirect revalidation, fixed deadlines, and decoded-body limits.
