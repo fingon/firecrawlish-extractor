@@ -17,6 +17,7 @@ from .health import create_health_router
 from .logging_config import configure_logging
 from .middleware import BearerAuthenticationMiddleware, RequestIDMiddleware
 from .network import SafeHTTPFetcher, create_http_client
+from .scrape import create_scrape_router
 from .settings import Settings, get_settings
 
 APPLICATION_TITLE = "Firecrawlish Extractor"
@@ -56,6 +57,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.add_exception_handler(HTTPException, http_exception_handler)
     application.add_exception_handler(Exception, internal_exception_handler)
     application.include_router(create_health_router(application_settings))
+    application.include_router(create_scrape_router())
     api_key = application_settings.firecrawlish_api_key
     application.add_middleware(
         BearerAuthenticationMiddleware,

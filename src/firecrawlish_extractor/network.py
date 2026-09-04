@@ -46,6 +46,7 @@ class FetchedResponse:
     status_code: int
     content_type: str | None
     body: bytes
+    encoding: str = "utf-8"
 
 
 @dataclass(frozen=True, slots=True)
@@ -283,9 +284,18 @@ class SafeHTTPFetcher:
                 return _Redirect(location=location)
 
             body = await self._read_body(response)
+            try:
+                encoding = response.encoding or "utf-8"
+            except LookupError as exc:
+                raise FetchError(
+                    "The origin returned an invalid character encoding",
+                    status_code=502,
+                    category="invalid_response",
+                ) from exc
             return FetchedResponse(
                 body=body,
                 content_type=response.headers.get("content-type"),
+                encoding=encoding,
                 status_code=response.status_code,
                 url=str(target.url),
             )

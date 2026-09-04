@@ -19,7 +19,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
   checks, redirect revalidation, fixed deadlines, and decoded-body limits.
 - [x] Implement Trafilatura Markdown, cleaned HTML, and metadata extraction behind
   bounded worker concurrency.
-- Implement `/v2/scrape` with the exact request, response, and error behavior in
+- [x] Implement `/v2/scrape` with the exact request, response, and error behavior in
   the design.
 - Implement the optional SearXNG adapter and `/v2/search` result translation.
 - Add unit, golden, security, contract, and container integration tests,
