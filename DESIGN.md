@@ -126,7 +126,12 @@ Request:
 `url` is required and must be an absolute HTTP or HTTPS URL without embedded
 credentials. `formats` is optional and defaults to `["markdown"]`. It must be
 a non-empty, duplicate-free list containing only the string values `markdown`
-and `html`. Firecrawl's object-form format requests are not supported.
+and `html`. Firecrawl's object-form format requests are not supported. The
+Python SDK's optional `origin` diagnostic field is accepted and discarded;
+other unknown fields are rejected. The SDK's default values for
+`onlyMainContent`, `mobile`, `skipTlsVerification`, `removeBase64Images`,
+`fastMode`, `blockAds`, `maxAge`, and `storeInCache` are also accepted and
+discarded; non-default values for these unsupported options are rejected.
 
 Successful response:
 
@@ -169,7 +174,9 @@ Request:
 
 `query` is required, must contain non-whitespace text, and may contain at most
 500 characters. `limit` is optional, defaults to 10, and must be between 1 and
-100 inclusive. Only ordinary web results are supported.
+100 inclusive. Only ordinary web results are supported. The Python SDK's
+optional `origin` diagnostic field is accepted and discarded; other unknown
+fields are rejected.
 
 Successful response:
 

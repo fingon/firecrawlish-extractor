@@ -38,6 +38,7 @@ class SearchRequest(BaseModel):
         ge=MIN_SEARCH_LIMIT,
         le=MAX_SEARCH_LIMIT,
     )
+    origin: str | None = Field(default=None, exclude=True)
 
     @field_validator("query")
     @classmethod

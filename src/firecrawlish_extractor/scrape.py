@@ -1,8 +1,15 @@
-from typing import Literal
+from typing import Final, Literal, Self
 
 import structlog
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from .extraction import (
     ExtractionFailure,
@@ -14,17 +21,73 @@ from .network import FetchedResponse, FetchError, validate_target_url
 SCRAPE_PATH = "/v2/scrape"
 DEFAULT_FORMAT: OutputFormat = "markdown"
 SUPPORTED_HTML_MEDIA_TYPES = frozenset({"text/html", "application/xhtml+xml"})
+SDK_DEFAULT_MAX_AGE_MS: Final[int] = 14_400_000
+_SDK_COMPATIBILITY_DEFAULTS: Final[tuple[tuple[str, object], ...]] = (
+    ("only_main_content", True),
+    ("mobile", False),
+    ("skip_tls_verification", True),
+    ("remove_base64_images", True),
+    ("fast_mode", False),
+    ("block_ads", True),
+    ("max_age_ms", SDK_DEFAULT_MAX_AGE_MS),
+    ("store_in_cache", True),
+)
 
 logger = structlog.get_logger(__name__)
 
 
 class ScrapeRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
     url: AnyHttpUrl
     formats: list[OutputFormat] = Field(
         default_factory=lambda: [DEFAULT_FORMAT],
     )
+    origin: str | None = Field(default=None, exclude=True)
+    only_main_content: bool | None = Field(
+        default=None,
+        alias="onlyMainContent",
+        exclude=True,
+    )
+    mobile: bool | None = Field(default=None, exclude=True)
+    skip_tls_verification: bool | None = Field(
+        default=None,
+        alias="skipTlsVerification",
+        exclude=True,
+    )
+    remove_base64_images: bool | None = Field(
+        default=None,
+        alias="removeBase64Images",
+        exclude=True,
+    )
+    fast_mode: bool | None = Field(
+        default=None,
+        alias="fastMode",
+        exclude=True,
+    )
+    block_ads: bool | None = Field(
+        default=None,
+        alias="blockAds",
+        exclude=True,
+    )
+    max_age_ms: int | None = Field(
+        default=None,
+        alias="maxAge",
+        exclude=True,
+    )
+    store_in_cache: bool | None = Field(
+        default=None,
+        alias="storeInCache",
+        exclude=True,
+    )
+
+    @model_validator(mode="after")
+    def validate_sdk_compatibility_defaults(self) -> Self:
+        for field_name, expected_value in _SDK_COMPATIBILITY_DEFAULTS:
+            actual_value = getattr(self, field_name)
+            if actual_value is not None and actual_value != expected_value:
+                raise ValueError(f"{field_name} is not supported")
+        return self
 
     @field_validator("url")
     @classmethod

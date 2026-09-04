@@ -1,13 +1,16 @@
 IMAGE_NAME ?= firecrawlish-extractor:local
 CONTAINER_RUNTIME ?= docker
 
-.PHONY: lint test build image smoke
+.PHONY: lint test integration build image smoke
 
 lint:
 	uv run --locked prek run --all-files
 
 test:
-	uv run --locked pytest
+	uv run --locked pytest -m "not integration"
+
+integration:
+	uv run --locked pytest -m integration
 
 build:
 	uv build

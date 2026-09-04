@@ -121,6 +121,10 @@ def test_scrape_returns_only_requested_formats() -> None:
             "Invalid request",
         ),
         (
+            {"url": "https://example.com/", "onlyMainContent": False},
+            "Invalid request",
+        ),
+        (
             {"url": "https://user:pass@example.com/"},
             "Invalid request",
         ),

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import threading
 import time
 from pathlib import Path
@@ -43,6 +44,39 @@ async def test_extraction_returns_requested_formats_and_metadata() -> None:
     assert result.metadata["description"] == "An example article description."
     assert result.metadata["language"] == "en"
     assert result.metadata["siteName"] == "Example News"
+
+
+@pytest.mark.anyio
+async def test_extraction_matches_golden_outputs() -> None:
+    pool = ExtractionPool()
+
+    try:
+        result = await pool.extract(
+            ARTICLE_HTML,
+            ARTICLE_URL,
+            ("markdown", "html"),
+        )
+    finally:
+        await pool.aclose()
+
+    testdata_directory = Path("tests/testdata")
+    expected_markdown = (
+        (testdata_directory / "article.markdown").read_text().removesuffix("\n")
+    )
+    expected_html = (
+        (testdata_directory / "article.cleaned.html")
+        .read_text()
+        .removesuffix("\n")
+    )
+    expected_metadata = json.loads(
+        (testdata_directory / "article.metadata.json").read_text()
+    )
+
+    assert result.outputs == {
+        "markdown": expected_markdown,
+        "html": expected_html,
+    }
+    assert result.metadata == expected_metadata
 
 
 @pytest.mark.anyio

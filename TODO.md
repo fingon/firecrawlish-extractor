@@ -1,6 +1,6 @@
 # TODO
 
-The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
+The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
 
 - [x] Establish code-quality checks before any implementation: target the latest
   stable Python release; add the latest stable prek, Ruff, and ty releases to
@@ -22,7 +22,7 @@ The service described in [DESIGN.md](DESIGN.md) is not yet implemented.
 - [x] Implement `/v2/scrape` with the exact request, response, and error behavior in
   the design.
 - [x] Implement the optional SearXNG adapter and `/v2/search` result translation.
-- Add unit, golden, security, contract, and container integration tests,
+- [x] Add unit, golden, security, contract, and container integration tests,
   including a Firecrawl SDK/Hermes-compatible smoke test.
 - Build the non-root, read-only-compatible container image and document concrete
   Hermes and SearXNG deployment examples once the commands can be verified.

@@ -19,6 +19,7 @@ firecrawlish-extractor = "firecrawlish_extractor.__main__:main"
 
 [dependency-groups]
 dev = [
+    "firecrawl-py==4.41.0",
     "prek==0.5.2",
     "pytest==9.1.1",
     "ruff==0.16.6",
@@ -31,3 +32,6 @@ build-backend = "uv_build"
 
 [tool.ruff]
 line-length = 80
+
+[tool.pytest.ini_options]
+markers = ["integration: uses local servers or a container runtime"]
