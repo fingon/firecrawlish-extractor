@@ -29,7 +29,7 @@ def _assert_scrape_payload(response: httpx.Response) -> None:
 )
 def test_firecrawl_python_sdk_smoke(api_key: str | None) -> None:
     from firecrawl import Firecrawl
-    from firecrawl.v2.types import SearchResultWeb
+    from firecrawl.v2.types import Document, SearchResultWeb
 
     with (
         fixture_server() as origin_url,
@@ -55,6 +55,7 @@ def test_firecrawl_python_sdk_smoke(api_key: str | None) -> None:
             f"{origin_url}/article",
             formats=FORMATS,
         )
+        assert isinstance(document, Document)
         assert document.markdown is not None
         assert "# Example article" in document.markdown
         assert document.html is not None

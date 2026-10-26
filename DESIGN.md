@@ -364,9 +364,10 @@ maintained in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Dependency and development policy
 
-Runtime and development dependencies live in `pyproject.toml` and a committed
-lock file. Direct dependencies are limited to the HTTP framework/server,
-validation/settings, HTTPX, Trafilatura, and structured logging support.
+The service targets Python 3.15. Runtime and development dependencies live in
+`pyproject.toml` and a committed lock file. Direct dependencies are limited to
+the HTTP framework/server, validation/settings, HTTPX, Trafilatura, and
+structured logging support.
 
 The repository provides Makefile targets for at least `lint`, `test`, `build`,
 `image`, and `smoke`. Linting includes formatting checks, static analysis, and
@@ -375,7 +376,21 @@ must pass before changes are considered complete.
 
 ## GitHub Actions
 
-The repository has two workflows.
+The repository has CI and image-publishing workflows plus Dependabot update
+configuration.
+
+### Dependency updates
+
+Dependabot checks the uv project and lock file, GitHub Actions, and Docker
+images daily. Version updates are grouped by ecosystem and wait until releases
+are at least three days old. Security updates bypass this cooldown. Updates
+require manual review and merging, with the existing CI checks applying to
+Dependabot pull requests. Python container updates stay within the supported
+3.15 series; upgrading the Python minor version requires a coordinated change.
+
+The Dockerfile exposes Python and uv through literal named `FROM` stages so
+Dependabot can discover both images. The `PYTHON_BASE` argument defaults to the
+Python stage and still accepts a digest-pinned override for publishing.
 
 ### Continuous integration
 
@@ -412,7 +427,7 @@ runs the container smoke test, and atomically replaces `latest`.
 
 Python dependencies remain reproducible: a dependency change means a reviewed
 change to the committed lock file, not an unrecorded dependency upgrade during
-the image build. Daily dependency-update tooling may propose lock-file changes,
+the image build. Dependabot proposes reviewed manifest and lock-file changes,
 but publishing occurs only from the default branch. A changed base digest is
 picked up directly by the daily image workflow.
 

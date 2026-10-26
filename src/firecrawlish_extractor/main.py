@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import cast
 
@@ -25,7 +25,7 @@ APPLICATION_TITLE = "Firecrawlish Extractor"
 
 
 @asynccontextmanager
-async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
+async def application_lifespan(application: FastAPI) -> AsyncGenerator[None]:
     settings = cast(Settings, application.state.settings)
     async with create_http_client() as client:
         application.state.http_client = client

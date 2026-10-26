@@ -2,7 +2,7 @@ import json
 import socket
 import threading
 import time
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -58,7 +58,7 @@ def free_port() -> int:
 
 
 @contextmanager
-def fixture_server(bind_host: str = "127.0.0.1") -> Iterator[str]:
+def fixture_server(bind_host: str = "127.0.0.1") -> Generator[str]:
     server = ThreadingHTTPServer(
         (bind_host, 0),
         FixtureRequestHandler,
@@ -103,7 +103,7 @@ def running_app(
     *,
     api_key: str | None = None,
     searxng_url: str | None = None,
-) -> Iterator[str]:
+) -> Generator[str]:
     port = free_port()
     settings = Settings(
         allow_private_networks=True,

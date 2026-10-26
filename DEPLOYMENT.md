@@ -7,13 +7,13 @@ when another host or service needs access.
 
 ## Build and run
 
-Build the image from this repository with Docker or Podman. `PYTHON_BASE` is a
-complete `FROM` reference, so a release build can replace the tag with a
-registry digest.
+Build the image from this repository with Docker or Podman. `PYTHON_BASE`
+defaults to the versioned `python-base` stage and accepts a complete image
+reference, so a release build can replace the tag with a registry digest.
 
 ```sh
 docker build \
-  --build-arg PYTHON_BASE=python:3.14.7-slim \
+  --build-arg PYTHON_BASE=python:3.15.1-slim \
   --tag firecrawlish-extractor:local .
 ```
 

@@ -32,3 +32,8 @@ The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
 - [x] Add a daily and manually dispatchable GitHub Actions publisher that detects
   base-image digest or committed dependency-lock changes, smoke-tests changed
   builds, and publishes only the `latest` tag to GitHub Container Registry.
+- [x] Configure daily grouped Dependabot updates for uv dependencies, GitHub
+  Actions, and Docker images with a three-day release cooldown and manual
+  merging. Refresh pinned dependencies and align CI and containers on Python
+  3.15, retaining digest-based publishing and restricting automated Python
+  image updates to the supported minor series.

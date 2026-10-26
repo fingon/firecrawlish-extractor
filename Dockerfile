@@ -1,8 +1,12 @@
-ARG PYTHON_BASE=python:3.14.7-slim
+ARG PYTHON_BASE=python-base
+
+FROM python:3.15.1-slim AS python-base
+
+FROM ghcr.io/astral-sh/uv:0.13.5 AS uv-tools
 
 FROM ${PYTHON_BASE} AS builder
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.7 /uv /uvx /bin/
+COPY --from=uv-tools /uv /uvx /bin/
 
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \

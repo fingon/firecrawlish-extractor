@@ -2,10 +2,9 @@
 
 This is the main article content with enough text for extraction and useful context for a reader who wants to understand the subject.
 
-          It contains a
+It contains a
           [link to related reading on the same subject](https://example.com/related)
           and enough surrounding prose to avoid being treated as noise.
-        
 
 ## Details
 

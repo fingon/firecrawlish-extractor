@@ -56,9 +56,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          base_spec="$(sed -n 's/^ARG PYTHON_BASE=//p' Dockerfile | head -n 1)"
+          base_spec="$(sed -n 's/^FROM \(.*\) AS python-base$/\1/p' Dockerfile | head -n 1)"
           if [[ -z "$base_spec" ]]; then
-            echo "Dockerfile does not define a default PYTHON_BASE" >&2
+            echo "Dockerfile does not define a python-base stage" >&2
             exit 1
           fi
           base_ref="${base_spec%@*}"
