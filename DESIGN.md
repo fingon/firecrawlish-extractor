@@ -371,8 +371,9 @@ structured logging support.
 
 The repository provides Makefile targets for at least `lint`, `test`, `build`,
 `image`, and `smoke`. Linting includes formatting checks, static analysis, and
-strict type checking. Pre-commit hooks use prek, and `prek run --all-files`
-must pass before changes are considered complete.
+strict type checking. Actionlint checks GitHub Actions workflows through its
+version-pinned upstream pre-commit hook. Pre-commit hooks use prek, and
+`prek run --all-files` must pass before changes are considered complete.
 
 ## GitHub Actions
 

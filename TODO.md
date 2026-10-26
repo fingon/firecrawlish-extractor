@@ -37,3 +37,5 @@ The service described in [DESIGN.md](DESIGN.md) is implemented incrementally.
   merging. Refresh pinned dependencies and align CI and containers on Python
   3.15, retaining digest-based publishing and restricting automated Python
   image updates to the supported minor series.
+- [x] Run Actionlint through its pinned upstream prek hook for GitHub Actions
+  workflow changes and the Makefile lint target used in CI.

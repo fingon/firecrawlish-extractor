@@ -9,7 +9,8 @@ the Firecrawl v2 response format. The HTTP service is configured through
 environment variables and has no required external state.
 
 Built on Python 3.15, with reproducible dependencies and daily Dependabot
-checks that give new releases a three-day cooldown.
+checks that give new releases a three-day cooldown. Pre-commit checks cover
+Python code and GitHub Actions workflows.
 
 See [DESIGN.md](DESIGN.md) for the API, security model, configuration, and
 acceptance criteria, and [TODO.md](TODO.md) for the implementation checklist.
