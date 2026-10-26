@@ -189,19 +189,18 @@ jobs:
         run: |
           set -euo pipefail
           container_id=""
-          cleanup() {
+          trap '
             if [[ -n "$container_id" ]]; then
               docker rm --force "$container_id" >/dev/null
             fi
-          }
-          trap cleanup EXIT
+          ' EXIT
 
           container_id="$(docker run --detach \
             --publish 127.0.0.1:3002:3002 \
             --read-only \
             --tmpfs /tmp:rw,noexec,nosuid,size=16m \
             "$IMAGE_REF")"
-          for attempt in $(seq 1 30); do
+          for _attempt in $(seq 1 30); do
             if curl --fail --silent --show-error \
               http://127.0.0.1:3002/healthz; then
               exit 0
