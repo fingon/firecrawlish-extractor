@@ -16,7 +16,7 @@ concurrency:
 jobs:
   verify:
     name: Verify
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     timeout-minutes: 20
     permissions:
       contents: read
