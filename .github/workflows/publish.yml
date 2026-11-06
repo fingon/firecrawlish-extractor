@@ -32,7 +32,7 @@ concurrency:
 jobs:
   detect:
     name: Detect changed build inputs
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     timeout-minutes: 10
     permissions:
       contents: read
@@ -148,7 +148,7 @@ jobs:
     name: Build, smoke-test, and publish latest
     needs: detect
     if: needs.detect.outputs.changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: avrea-ubuntu-latest-2-vcpu
     timeout-minutes: 20
     permissions:
       contents: read
