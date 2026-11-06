@@ -7,8 +7,8 @@ requires-python = ">=3.15,<3.16"
 dependencies = [
     "fastapi==0.162.0",
     "httpx==0.28.1",
-    "pydantic==2.14.1",
-    "pydantic-settings==2.16.1",
+    "pydantic==2.14.2",
+    "pydantic-settings==2.16.2",
     "structlog==26.1.0",
     "trafilatura==2.3.1",
     "uvicorn==0.54.0",
@@ -20,14 +20,14 @@ firecrawlish-extractor = "firecrawlish_extractor.__main__:main"
 [dependency-groups]
 dev = [
     "firecrawl-py==4.54.0",
-    "prek==0.5.7",
-    "pytest==9.1.1",
-    "ruff==0.17.2",
-    "ty==0.0.92",
+    "prek==0.5.9",
+    "pytest==9.2.0",
+    "ruff==0.17.3",
+    "ty==0.0.95",
 ]
 
 [build-system]
-requires = ["uv_build==0.13.5"]
+requires = ["uv_build==0.13.6"]
 build-backend = "uv_build"
 
 [tool.ruff]
